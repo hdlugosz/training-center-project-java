@@ -18,6 +18,8 @@ public class Student {
         courseMap = new LinkedHashMap<>();
     }
 
+    private Student() {}
+
     public String getName() {
         return name;
     }
