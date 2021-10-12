@@ -22,13 +22,9 @@ public class Report {
 
             int programDuration = calculateProgramDuration(student);
 
-            if (TrainingTimeManager.isTrainingFinished(student.getStartDateTime(), programDuration)) {
-                System.out.print("Training completed - ");
-                printTimeInfoForCompletedTraining(student, programDuration);
-            } else {
-                System.out.print("Training still in progress - ");
-                printTimeInfoForTrainingInProgress(student, programDuration);
-            }
+            boolean isFinished = TrainingTimeManager.isTrainingFinished(student.getStartDateTime(), programDuration);
+
+            printTimeToCompletionInfo(student, programDuration, isFinished);
         }
         System.out.println("\n");
     }
@@ -48,11 +44,10 @@ public class Report {
             printProgramDurationInfo(programDuration);
             printStartAndEndDateInfo(student, programDuration);
 
-            if (TrainingTimeManager.isTrainingFinished(student.getStartDateTime(), programDuration)) {
-                printTimeInfoForCompletedTraining(student, programDuration);
-            } else {
-                printTimeInfoForTrainingInProgress(student, programDuration);
-            }
+            boolean isFinished = TrainingTimeManager.isTrainingFinished(student.getStartDateTime(), programDuration);
+
+            printTimeToCompletionInfo(student, programDuration, isFinished);
+
             System.out.println("\n");
         }
     }
@@ -93,35 +88,30 @@ public class Report {
                 student.getStartDateTime(), programDuration).toString());
     }
 
-    private void printTimeInfoForCompletedTraining(Student student, int programDuration) {
-        int hoursAfterCompletion = (TrainingTimeManager.calculateHoursToTrainingCompletion(
+    private void printTimeToCompletionInfo(Student student, int programDuration, boolean isFinished) {
+        String stringHours;
+        String stringDaysAndHours;
+
+        if (isFinished) {
+            stringHours = "Time passed since completion: %5dhrs\n";
+            stringDaysAndHours = "Time passed since completion: %2dd %dhrs\n";
+        } else {
+            stringHours = "Time left to completion: %10dhrs\n";
+            stringDaysAndHours = "Time left to completion: %7dd %dhrs\n";
+        }
+
+        int hoursToCompletion = (TrainingTimeManager.calculateHoursToTrainingCompletion(
                 student.getStartDateTime(), programDuration));
 
-        if (hoursAfterCompletion < 8) {
-            System.out.printf("Time passed since completion: %5dhrs\n", hoursAfterCompletion);
-        } else {
-            int days = 0;
-            while (hoursAfterCompletion >= 8) {
-                days++;
-                hoursAfterCompletion -= 8;
-            }
-            System.out.printf("Time passed since completion: %2dd %dhrs\n", days, hoursAfterCompletion);
-        }
-    }
-
-    private void printTimeInfoForTrainingInProgress(Student student, int programDuration) {
-        int hoursToCompletion = TrainingTimeManager.calculateHoursToTrainingCompletion(
-                student.getStartDateTime(), programDuration);
-
         if (hoursToCompletion < 8) {
-            System.out.printf("Time left to completion: %10dhrs\n", hoursToCompletion);
+            System.out.printf(stringHours, hoursToCompletion);
         } else {
             int days = 0;
             while (hoursToCompletion >= 8) {
                 days++;
                 hoursToCompletion -= 8;
             }
-            System.out.printf("Time left to completion: %7dd %dhrs\n", days, hoursToCompletion);
+            System.out.printf(stringDaysAndHours, days, hoursToCompletion);
         }
     }
 }
