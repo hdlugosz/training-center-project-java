@@ -20,43 +20,14 @@ public class Report {
         for (Student student : students) {
             System.out.printf("%s(%s) - ", student.getName(), student.getCurriculum());
 
-            int programDuration = 0;
-            for (Map.Entry<String, Integer> entry : student.getCourseMap().entrySet()) {
-                programDuration += entry.getValue();
-            }
+            int programDuration = calculateProgramDuration(student);
 
-            int days;
             if (TrainingTimeManager.isTrainingFinished(student.getStartDateTime(), programDuration)) {
                 System.out.print("Training completed - ");
-                int hoursAfterCompletion = (TrainingTimeManager.calculateHoursToTrainingCompletion(
-                        student.getStartDateTime(), programDuration));
-
-                if (hoursAfterCompletion < 8) {
-                    System.out.printf("Time passed since completion: %dhrs\n", hoursAfterCompletion);
-                } else {
-                    days = 0;
-                    while (hoursAfterCompletion >= 8) {
-                        days++;
-                        hoursAfterCompletion -= 8;
-                    }
-                    System.out.printf("Time passed since completion: %dd %dhrs\n", days, hoursAfterCompletion);
-                }
-
+                printTimeInfoForCompletedTraining(student, programDuration);
             } else {
                 System.out.print("Training still in progress - ");
-                int hoursToCompletion = TrainingTimeManager.calculateHoursToTrainingCompletion(
-                        student.getStartDateTime(), programDuration);
-
-                if (hoursToCompletion < 8) {
-                    System.out.printf("Time left to completion: %dhrs\n", hoursToCompletion);
-                } else {
-                    days = 0;
-                    while (hoursToCompletion >= 8) {
-                        days++;
-                        hoursToCompletion -= 8;
-                    }
-                    System.out.printf("Time left to completion: %dd %dhrs\n", days, hoursToCompletion);
-                }
+                printTimeInfoForTrainingInProgress(student, programDuration);
             }
         }
         System.out.println("\n");
@@ -71,59 +42,86 @@ public class Report {
             System.out.printf("Name: %32s\n", student.getName());
             System.out.printf("Curriculum: %26s\n", student.getCurriculum());
 
-            int programDuration = 0;
-            for (Map.Entry<String, Integer> entry : student.getCourseMap().entrySet()) {
-                System.out.printf("Course: %12s, Duration: %3dhrs\n", entry.getKey(), entry.getValue());
-                programDuration += entry.getValue();
-            }
+            int programDuration = calculateProgramDuration(student);
 
-            System.out.printf("Start date: %26s\n", student.getStartDateTime().toString());
-            System.out.printf("End date: %28s\n", TrainingTimeManager.calculateEndDateTime(
-                    student.getStartDateTime(), programDuration).toString());
-
-            int days = 0;
-            int programDurationTemp = programDuration;
-            if (programDurationTemp < 8) {
-                System.out.printf("Duration of the program: %10dhrs\n", programDurationTemp);
-            } else {
-                while (programDurationTemp >= 8) {
-                    days++;
-                    programDurationTemp -= 8;
-                }
-                System.out.printf("Duration of the program: %7dd %dhrs\n", days, programDurationTemp);
-            }
+            printCourseList(student);
+            printProgramDurationInfo(programDuration);
+            printStartAndEndDateInfo(student, programDuration);
 
             if (TrainingTimeManager.isTrainingFinished(student.getStartDateTime(), programDuration)) {
-                int hoursAfterCompletion = (TrainingTimeManager.calculateHoursToTrainingCompletion(
-                        student.getStartDateTime(), programDuration));
-
-                if (hoursAfterCompletion < 8) {
-                    System.out.printf("Time passed since completion: %5dhrs\n", hoursAfterCompletion);
-                } else {
-                    days = 0;
-                    while (hoursAfterCompletion >= 8) {
-                        days++;
-                        hoursAfterCompletion -= 8;
-                    }
-                    System.out.printf("Time passed since completion: %2dd %dhrs\n", days, hoursAfterCompletion);
-                }
-
+                printTimeInfoForCompletedTraining(student, programDuration);
             } else {
-                int hoursToCompletion = TrainingTimeManager.calculateHoursToTrainingCompletion(
-                        student.getStartDateTime(), programDuration);
-
-                if (hoursToCompletion < 8) {
-                    System.out.printf("Time left to completion: %10dhrs\n", hoursToCompletion);
-                } else {
-                    days = 0;
-                    while (hoursToCompletion >= 8) {
-                        days++;
-                        hoursToCompletion -= 8;
-                    }
-                    System.out.printf("Time left to completion: %7dd %dhrs\n", days, hoursToCompletion);
-                }
+                printTimeInfoForTrainingInProgress(student, programDuration);
             }
             System.out.println("\n");
+        }
+    }
+
+    /**
+     * auxiliary methods for generating reports
+     */
+    private int calculateProgramDuration(Student student) {
+        int programDuration = 0;
+        for (Map.Entry<String, Integer> entry : student.getCourseMap().entrySet()) {
+            programDuration += entry.getValue();
+        }
+        return programDuration;
+    }
+
+    private void printCourseList(Student student) {
+        for (Map.Entry<String, Integer> entry : student.getCourseMap().entrySet()) {
+            System.out.printf("Course: %12s, Duration: %3dhrs\n", entry.getKey(), entry.getValue());
+        }
+    }
+
+    private void printProgramDurationInfo(int programDuration) {
+        int days = 0;
+        if (programDuration < 8) {
+            System.out.printf("Duration of the program: %10dhrs\n", programDuration);
+        } else {
+            while (programDuration >= 8) {
+                days++;
+                programDuration -= 8;
+            }
+            System.out.printf("Duration of the program: %7dd %dhrs\n", days, programDuration);
+        }
+    }
+
+    private void printStartAndEndDateInfo(Student student, int programDuration) {
+        System.out.printf("Start date: %26s\n", student.getStartDateTime().toString());
+        System.out.printf("End date: %28s\n", TrainingTimeManager.calculateEndDateTime(
+                student.getStartDateTime(), programDuration).toString());
+    }
+
+    private void printTimeInfoForCompletedTraining(Student student, int programDuration) {
+        int hoursAfterCompletion = (TrainingTimeManager.calculateHoursToTrainingCompletion(
+                student.getStartDateTime(), programDuration));
+
+        if (hoursAfterCompletion < 8) {
+            System.out.printf("Time passed since completion: %5dhrs\n", hoursAfterCompletion);
+        } else {
+            int days = 0;
+            while (hoursAfterCompletion >= 8) {
+                days++;
+                hoursAfterCompletion -= 8;
+            }
+            System.out.printf("Time passed since completion: %2dd %dhrs\n", days, hoursAfterCompletion);
+        }
+    }
+
+    private void printTimeInfoForTrainingInProgress(Student student, int programDuration) {
+        int hoursToCompletion = TrainingTimeManager.calculateHoursToTrainingCompletion(
+                student.getStartDateTime(), programDuration);
+
+        if (hoursToCompletion < 8) {
+            System.out.printf("Time left to completion: %10dhrs\n", hoursToCompletion);
+        } else {
+            int days = 0;
+            while (hoursToCompletion >= 8) {
+                days++;
+                hoursToCompletion -= 8;
+            }
+            System.out.printf("Time left to completion: %7dd %dhrs\n", days, hoursToCompletion);
         }
     }
 }

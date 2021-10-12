@@ -11,7 +11,7 @@ public class DataLoader {
     private static final String STUDENTS_JSON_PATH = "src/main/resources/students.json";
 
     /**
-     * loadData method returns List of Student class that contains students data that is hardcoded.
+     * loadData method returns List of Student class that contains students data that is in students.json file.
      */
     public static List<Student> loadData() {
 
