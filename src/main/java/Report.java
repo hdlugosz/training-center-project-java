@@ -1,11 +1,14 @@
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang3.math.NumberUtils.INTEGER_ZERO;
+
 /**
  * Report class retrieves information about students from List<Student>
  * and is able to generate reports based on this information.
  */
 public class Report {
+    private final int WORKING_HOURS_PER_DAY = 8;
     private final List<Student> students;
 
     public Report(List<Student> students) {
@@ -56,7 +59,7 @@ public class Report {
      * auxiliary methods for generating reports
      */
     private int calculateProgramDuration(Student student) {
-        int programDuration = 0;
+        int programDuration = INTEGER_ZERO;
         for (Map.Entry<String, Integer> entry : student.getCourseMap().entrySet()) {
             programDuration += entry.getValue();
         }
@@ -70,13 +73,13 @@ public class Report {
     }
 
     private void printProgramDurationInfo(int programDuration) {
-        int days = 0;
-        if (programDuration < 8) {
+        if (programDuration < WORKING_HOURS_PER_DAY) {
             System.out.printf("Duration of the program: %10dhrs\n", programDuration);
         } else {
-            while (programDuration >= 8) {
+            int days = INTEGER_ZERO;
+            while (programDuration >= WORKING_HOURS_PER_DAY) {
                 days++;
-                programDuration -= 8;
+                programDuration -= WORKING_HOURS_PER_DAY;
             }
             System.out.printf("Duration of the program: %7dd %dhrs\n", days, programDuration);
         }
@@ -103,13 +106,13 @@ public class Report {
         int hoursToCompletion = (TrainingTimeManager.calculateHoursToTrainingCompletion(
                 student.getStartDateTime(), programDuration));
 
-        if (hoursToCompletion < 8) {
+        if (hoursToCompletion < WORKING_HOURS_PER_DAY) {
             System.out.printf(stringHours, hoursToCompletion);
         } else {
-            int days = 0;
-            while (hoursToCompletion >= 8) {
+            int days = INTEGER_ZERO;
+            while (hoursToCompletion >= WORKING_HOURS_PER_DAY) {
                 days++;
-                hoursToCompletion -= 8;
+                hoursToCompletion -= WORKING_HOURS_PER_DAY;
             }
             System.out.printf(stringDaysAndHours, days, hoursToCompletion);
         }

@@ -2,7 +2,14 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+import static org.apache.commons.lang3.math.NumberUtils.INTEGER_ONE;
+import static org.apache.commons.lang3.math.NumberUtils.INTEGER_ZERO;
+
 public class TrainingTimeManager {
+    private final static int WORKING_HOURS_PER_DAY = 8;
+    private final static int NON_WORKING_HOURS_PER_DAY = 16;
+    private final static int START_OF_WORK_HOUR = 10;
+    private final static int END_OF_WORK_HOUR = 18;
 
     /**
      * calculateHoursBetweenTwoDateTimes method calculates and returns number of hours between two given dates,
@@ -10,20 +17,21 @@ public class TrainingTimeManager {
      */
     public static int calculateHoursBetweenTwoDateTimes(LocalDateTime earlierDateTime, LocalDateTime laterDateTime) {
 
-        int hours = 0;
+        int hours = INTEGER_ZERO;
 
-        if (earlierDateTime.getHour() == 18) {
-            earlierDateTime = earlierDateTime.plusHours(16);
+        if (earlierDateTime.getHour() == END_OF_WORK_HOUR) {
+            earlierDateTime = earlierDateTime.plusHours(NON_WORKING_HOURS_PER_DAY);
         }
 
         while (earlierDateTime.isBefore(laterDateTime)) {
-            if (earlierDateTime.getHour() >= 10 && earlierDateTime.getHour() <= 17 &&
+            if (earlierDateTime.getHour() >= START_OF_WORK_HOUR &&
+                    earlierDateTime.getHour() <= END_OF_WORK_HOUR - INTEGER_ONE &&
                     earlierDateTime.getDayOfWeek() != DayOfWeek.SATURDAY &&
                     earlierDateTime.getDayOfWeek() != DayOfWeek.SUNDAY) {
-                earlierDateTime = earlierDateTime.plusHours(1);
-                hours += 1;
+                earlierDateTime = earlierDateTime.plusHours(INTEGER_ONE);
+                hours += INTEGER_ONE;
             } else {
-                earlierDateTime = earlierDateTime.plusHours(1);
+                earlierDateTime = earlierDateTime.plusHours(INTEGER_ONE);
             }
         }
 
@@ -36,22 +44,22 @@ public class TrainingTimeManager {
      */
     public static LocalDateTime calculateEndDateTime(LocalDateTime startDateTime, Integer programDuration) {
 
-        while (programDuration > 8) {
+        while (programDuration > WORKING_HOURS_PER_DAY) {
             if (startDateTime.getDayOfWeek() == DayOfWeek.SATURDAY ||
                     startDateTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
-                startDateTime = startDateTime.plusDays(1);
+                startDateTime = startDateTime.plusDays(INTEGER_ONE);
             } else {
-                startDateTime = startDateTime.plusDays(1);
-                programDuration -= 8;
+                startDateTime = startDateTime.plusDays(INTEGER_ONE);
+                programDuration -= WORKING_HOURS_PER_DAY;
             }
         }
 
         while (startDateTime.getDayOfWeek() == DayOfWeek.SATURDAY ||
                 startDateTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
-            startDateTime = startDateTime.plusDays(1);
+            startDateTime = startDateTime.plusDays(INTEGER_ONE);
         }
 
-        if (programDuration > 0) {
+        if (programDuration > INTEGER_ZERO) {
             startDateTime = startDateTime.plusHours(programDuration);
         }
 
