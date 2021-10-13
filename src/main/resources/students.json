@@ -1,10 +1,10 @@
 [ {
   "name" : "Ivanov Ivan",
   "curriculum" : "Java Developer",
-  "startDateTime" : [ 2021, 9, 6, 10, 0 ],
+  "startDateTime" : [ 2021, 10, 4, 10, 0 ],
   "courseMap" : {
     "Java" : 28,
-    "JDBC" : 14,
+    "JDBC" : 16,
     "Spring" : 14
   }
 }, {
