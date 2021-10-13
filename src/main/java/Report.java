@@ -21,12 +21,10 @@ public class Report {
     public void generateShortReport() {
 
         for (Student student : students) {
-            System.out.printf("%s(%s) - ", student.getName(), student.getCurriculum());
-
             int programDuration = calculateProgramDuration(student);
-
             boolean isFinished = TrainingTimeManager.isTrainingFinished(student.getStartDateTime(), programDuration);
 
+            System.out.printf("%s(%s) - ", student.getName(), student.getCurriculum());
             printTimeToCompletionInfo(student, programDuration, isFinished);
         }
         System.out.println("\n");
@@ -38,19 +36,15 @@ public class Report {
     public void generateFullReport() {
 
         for (Student student : students) {
+            int programDuration = calculateProgramDuration(student);
+            boolean isFinished = TrainingTimeManager.isTrainingFinished(student.getStartDateTime(), programDuration);
+
             System.out.printf("Name: %32s\n", student.getName());
             System.out.printf("Curriculum: %26s\n", student.getCurriculum());
-
-            int programDuration = calculateProgramDuration(student);
-
             printCourseList(student);
             printProgramDurationInfo(programDuration);
             printStartAndEndDateInfo(student, programDuration);
-
-            boolean isFinished = TrainingTimeManager.isTrainingFinished(student.getStartDateTime(), programDuration);
-
             printTimeToCompletionInfo(student, programDuration, isFinished);
-
             System.out.println("\n");
         }
     }
@@ -72,17 +66,24 @@ public class Report {
         }
     }
 
-    private void printProgramDurationInfo(int programDuration) {
-        if (programDuration < WORKING_HOURS_PER_DAY) {
-            System.out.printf("Duration of the program: %10dhrs\n", programDuration);
+    private void printTimeInfo(int hours, String stringHours, String stringDaysAndHours) {
+        if (hours < WORKING_HOURS_PER_DAY) {
+            System.out.printf(stringHours, hours);
         } else {
             int days = INTEGER_ZERO;
-            while (programDuration >= WORKING_HOURS_PER_DAY) {
+            while (hours >= WORKING_HOURS_PER_DAY) {
                 days++;
-                programDuration -= WORKING_HOURS_PER_DAY;
+                hours -= WORKING_HOURS_PER_DAY;
             }
-            System.out.printf("Duration of the program: %7dd %dhrs\n", days, programDuration);
+            System.out.printf(stringDaysAndHours, days, hours);
         }
+    }
+
+    private void printProgramDurationInfo(int programDuration) {
+        String stringHours = "Duration of the program: %10dhrs\n";
+        String stringDaysAndHours = "Duration of the program: %7dd %dhrs\n";
+
+        printTimeInfo(programDuration, stringHours, stringDaysAndHours);
     }
 
     private void printStartAndEndDateInfo(Student student, int programDuration) {
@@ -94,6 +95,8 @@ public class Report {
     private void printTimeToCompletionInfo(Student student, int programDuration, boolean isFinished) {
         String stringHours;
         String stringDaysAndHours;
+        int hoursToCompletion = (TrainingTimeManager.calculateHoursToTrainingCompletion(
+                student.getStartDateTime(), programDuration));
 
         if (isFinished) {
             stringHours = "Time passed since completion: %5dhrs\n";
@@ -103,18 +106,6 @@ public class Report {
             stringDaysAndHours = "Time left to completion: %7dd %dhrs\n";
         }
 
-        int hoursToCompletion = (TrainingTimeManager.calculateHoursToTrainingCompletion(
-                student.getStartDateTime(), programDuration));
-
-        if (hoursToCompletion < WORKING_HOURS_PER_DAY) {
-            System.out.printf(stringHours, hoursToCompletion);
-        } else {
-            int days = INTEGER_ZERO;
-            while (hoursToCompletion >= WORKING_HOURS_PER_DAY) {
-                days++;
-                hoursToCompletion -= WORKING_HOURS_PER_DAY;
-            }
-            System.out.printf(stringDaysAndHours, days, hoursToCompletion);
-        }
+        printTimeInfo(hoursToCompletion, stringHours, stringDaysAndHours);
     }
 }
