@@ -1,0 +1,28 @@
+[ {
+  "name" : "Ivanov Ivan",
+  "curriculum" : "Java Developer",
+  "startDateTime" : [ 2021, 10, 4, 10, 0 ],
+  "courseMap" : {
+    "Java" : 28,
+    "JDBC" : 16,
+    "Spring" : 14
+  }
+}, {
+  "name" : "Sidorov Ivan",
+  "curriculum" : "AQE",
+  "startDateTime" : [ 2021, 9, 7, 10, 0 ],
+  "courseMap" : {
+    "Test Design" : 3,
+    "Page Object" : 2,
+    "Selenium" : 1
+  }
+}, {
+  "name" : "Leonardo DiCaprio",
+  "curriculum" : "Data Science",
+  "startDateTime" : [ 2021, 9, 1, 10, 0 ],
+  "courseMap" : {
+    "Python" : 4,
+    "R course" : 4,
+    "MatLab" : 4
+  }
+} ]
